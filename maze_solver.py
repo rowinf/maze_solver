@@ -6,6 +6,40 @@ class Point:
         self.x = x
         self.y = y
 
+class Cell:
+    def __init__(self, win, x1, y1, x2, y2, has_top_wall, has_right_wall, has_bottom_wall, has_left_wall):
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__x2 = x2
+        self.__y2 = y2
+        self.__win = win
+        self.has_left_wall =has_left_wall
+        self.has_right_wall=has_right_wall
+        self.has_top_wall=has_top_wall
+        self.has_bottom_wall=has_bottom_wall
+
+    def draw(self):
+        if self.has_top_wall:
+            p1 = Point(self.__x1, self.__y1)
+            p2 = Point(self.__x2, self.__y1)
+            line = Line(p1, p2)
+            self.__win.draw_line(line, "black")
+        if self.has_right_wall:
+            p1 = Point(self.__x2, self.__y1)
+            p2 = Point(self.__x2, self.__y2)
+            line = Line(p1, p2)
+            self.__win.draw_line(line, "black")
+        if self.has_bottom_wall:
+            p1 = Point(self.__x2, self.__y2)
+            p2 = Point(self.__x1, self.__y2)
+            line = Line(p1, p2)
+            self.__win.draw_line(line, "black")
+        if self.has_left_wall:
+            p1 = Point(self.__x1, self.__y1)
+            p2 = Point(self.__x1, self.__y2)
+            line = Line(p1, p2)
+            self.__win.draw_line(line, "black")
+
 class Line:
     def __init__(self, p1, p2):
         self.p1 = p1
@@ -46,15 +80,21 @@ class Window:
         self.running = False
 
     def draw_line(self, line, fill_color):
-        line.draw(self.canvas, "red")
+        line.draw(self.canvas, fill_color)
 
 
 def main():
     win = Window(800, 600)
-    line1 = Line(Point(10, 0), Point(10,100))
-    line2 = Line(Point(0, 10), Point(100, 10))
-    win.draw_line(line1, "red")
-    win.draw_line(line2, "black")
+
+    cell = Cell(win, 0, 0, 50, 50, False, True, True, False)
+    cell.draw()
+    cell1 = Cell(win, 0, 50, 50, 100, False, True, True, False)
+    cell1.draw()
+    cell2 = Cell(win, 50, 50, 100, 100, True, True, True, True)
+    cell2.draw()
+    cell3 = Cell(win, 150, 150, 200, 200, True, True, True, True)
+    cell3.draw()
+
     win.wait_for_close()
 
 main()
