@@ -1,5 +1,39 @@
 from tkinter import Tk, BOTH, Canvas
+import time
 
+class Maze:
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win):
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__num_rows = num_rows
+        self.__num_cols = num_cols
+        self.__cell_size_x = cell_size_x
+        self.__cell_size_y = cell_size_y
+        self.__win = win
+        self._cells = list()
+        self._create_cells()
+
+    def _create_cells(self):
+        for i in range(0, self.__num_cols):
+            column = list()
+            self._cells.append(column)
+            for j in range(0, self.__num_rows):
+                self._draw_cell(i, j)
+
+    def _draw_cell(self, i, j):
+        x1 = i * self.__cell_size_x + self.__x1
+        y1 = j * self.__cell_size_y + self.__y1
+        x2 = x1 + self.__cell_size_x
+        y2 = y1 + self.__cell_size_y
+        cell = Cell(self.__win, x1, y1, x2, y2, True, True, True, True)
+        # cell = Cell(self.__win, x1, y1, x2, y2, j == 0, i == self.__num_cols - 1, j == self.__num_rows - 1, i == 0)
+        self._cells[i].append(cell)
+        cell.draw()
+        self._animate()
+
+    def _animate(self):
+        self.__win.redraw()
+        time.sleep(0.05)
 
 class Cell:
     def __init__(self, win, x1, y1, x2, y2, has_top_wall, has_right_wall, has_bottom_wall, has_left_wall):
@@ -90,16 +124,7 @@ class Window:
 
 def main():
     win = Window(800, 600)
-
-    cell = Cell(win, 0, 0, 50, 50, False, True, True, False)
-    cell.draw()
-    cell1 = Cell(win, 0, 50, 50, 100, False, True, True, False)
-    cell1.draw()
-    cell.draw_move(cell1)
-    cell2 = Cell(win, 50, 50, 100, 100, True, True, True, True)
-    cell2.draw()
-    cell3 = Cell(win, 150, 150, 200, 200, True, True, True, True)
-    cell3.draw()
+    maze = Maze(50, 50, 10, 14, 50, 50, win)
 
     win.wait_for_close()
 
