@@ -2,7 +2,7 @@ from tkinter import Tk, BOTH, Canvas
 import time
 
 class Maze:
-    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win):
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None):
         self.__x1 = x1
         self.__y1 = y1
         self.__num_rows = num_rows
@@ -18,20 +18,23 @@ class Maze:
             column = list()
             self._cells.append(column)
             for j in range(0, self.__num_rows):
+                x1 = i * self.__cell_size_x + self.__x1
+                y1 = j * self.__cell_size_y + self.__y1
+                x2 = x1 + self.__cell_size_x
+                y2 = y1 + self.__cell_size_y
+                cell = Cell(self.__win, x1, y1, x2, y2, True, True, True, True)
+                self._cells[i].append(cell)
                 self._draw_cell(i, j)
 
     def _draw_cell(self, i, j):
-        x1 = i * self.__cell_size_x + self.__x1
-        y1 = j * self.__cell_size_y + self.__y1
-        x2 = x1 + self.__cell_size_x
-        y2 = y1 + self.__cell_size_y
-        cell = Cell(self.__win, x1, y1, x2, y2, True, True, True, True)
-        # cell = Cell(self.__win, x1, y1, x2, y2, j == 0, i == self.__num_cols - 1, j == self.__num_rows - 1, i == 0)
-        self._cells[i].append(cell)
+        if self.__win is None:
+            return
         cell.draw()
         self._animate()
 
     def _animate(self):
+        if self.__win is None:
+            return
         self.__win.redraw()
         time.sleep(0.05)
 
@@ -128,4 +131,5 @@ def main():
 
     win.wait_for_close()
 
-main()
+if __name__ == "__main__":
+    main()
