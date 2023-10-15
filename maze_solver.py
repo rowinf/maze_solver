@@ -12,6 +12,13 @@ class Maze:
         self.__win = win
         self._cells = list()
         self._create_cells()
+        self._break_entrance_and_exit()
+
+    def _break_entrance_and_exit(self):
+        self._break_wall(0, 0)
+        self._draw_cell(0, 0)
+        self._break_wall(self.__num_cols - 1, self.__num_rows - 1)
+        self._draw_cell(self.__num_cols - 1, self.__num_rows - 1)
 
     def _create_cells(self):
         for i in range(0, self.__num_cols):
@@ -26,9 +33,17 @@ class Maze:
                 self._cells[i].append(cell)
                 self._draw_cell(i, j)
 
+    def _break_wall(self, i, j):
+        cell = self._cells[i][j]
+        cell.has_top_wall = False
+        cell.has_right_wall = False
+        cell.has_bottom_wall = False
+        cell.has_left_wall = False
+
     def _draw_cell(self, i, j):
         if self.__win is None:
             return
+        cell = self._cells[i][j]
         cell.draw()
         self._animate()
 
@@ -61,21 +76,18 @@ class Cell:
         p2 = to_cell.mid_point()
         self.__win.draw_line(Line(p1, p2), 'grey' if undo else 'red')
 
-    def draw_wall(self, x1, y1, x2, y2):
+    def draw_wall(self, x1, y1, x2, y2, has_wall):
+        line_color = 'black' if has_wall else 'white'
         p1 = Point(x1, y1)
         p2 = Point(x2, y2)
         line = Line(p1, p2)
-        self.__win.draw_line(line, "black")
+        self.__win.draw_line(line, line_color)
 
     def draw(self):
-        if self.has_top_wall:
-            self.draw_wall(self.__x1, self.__y1, self.__x2, self.__y1)
-        if self.has_right_wall:
-            self.draw_wall(self.__x2, self.__y1, self.__x2, self.__y2)
-        if self.has_bottom_wall:
-            self.draw_wall(self.__x2, self.__y2, self.__x1, self.__y2)
-        if self.has_left_wall:
-            self.draw_wall(self.__x1, self.__y1, self.__x1, self.__y2)
+        self.draw_wall(self.__x1, self.__y1, self.__x2, self.__y1, self.has_top_wall)
+        self.draw_wall(self.__x2, self.__y1, self.__x2, self.__y2, self.has_right_wall)
+        self.draw_wall(self.__x2, self.__y2, self.__x1, self.__y2, self.has_bottom_wall)
+        self.draw_wall(self.__x1, self.__y1, self.__x1, self.__y2, self.has_left_wall)
 
 class Point:
     def __init__(self, x, y):
