@@ -19,6 +19,43 @@ class Maze:
         self._break_walls_r(0, 0)
         self._reset_cells_visited()
 
+    def _solve_r(self, i, j):
+        self._animate()
+        self._cells[i][j].visited = True
+        if i == self.__num_cols - 1 and j == self.__num_rows - 1:
+            return True
+
+        if i > 0 and not self._cells[i][j].has_left_wall and not self._cells[i - 1][j].visited:
+            self._cells[i][j].draw_move(self._cells[i - 1][j])
+            if self._solve_r(i - 1, j):
+                return True
+            else:
+                self._cells[i][j].draw_move(self._cells[i  - 1][j], True)
+
+        if i < self.__num_cols - 1 and not self._cells[i][j].has_right_wall and not self._cells[i + 1][j].visited:
+            self._cells[i][j].draw_move(self._cells[i + 1][j])
+            if self._solve_r(i + 1, j):
+                return True
+            else:
+                self._cells[i][j].draw_move(self._cells[i + 1][j], True)
+
+        if j > 0 and not self._cells[i][j].has_top_wall and not self._cells[i][j - 1].visited:
+            self._cells[i][j].draw_move(self._cells[i][j - 1])
+            if self._solve_r(i, j - 1):
+                return True
+            else:
+                self._cells[i][j].draw_move(self._cells[i][j - 1], True)
+
+        if j < self.__num_rows - 1 and not self._cells[i][j].has_bottom_wall and not self._cells[i][j + 1].visited:
+            self._cells[i][j].draw_move(self._cells[i][j + 1])
+            if self._solve_r(i, j + 1):
+                return True
+            else:
+                self._cells[i][j].draw_move(self._cells[i][j + 1], True)
+
+        return False
+            
+
     def _break_entrance_and_exit(self):
         self._break_wall(0, 0)
         self._draw_cell(0, 0)
@@ -56,7 +93,10 @@ class Maze:
             self._break_walls_r(ni, nj)
         else:
             self._draw_cell(i, j)
-            return
+            return self._cells[i][j]
+
+    def solve(self):
+        return self._solve_r(0, 0)
 
     def _reset_cells_visited(self):
         for i in range(0, self.__num_cols):
@@ -184,6 +224,14 @@ class Window:
 def main():
     win = Window(800, 600)
     maze = Maze(50, 50, 10, 14, 50, 50, win)
+
+    print("maze created")
+
+    is_solveable = maze.solve()
+    if not is_solveable:
+        print("maze cannot be solved")
+    else:
+        print("maze solved!")
 
     win.wait_for_close()
 
